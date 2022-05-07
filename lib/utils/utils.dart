@@ -10,8 +10,8 @@ class Val {
     var e = DateUtils.convertToDate(expires);
     var td = DateTime.now();
 
-    Duration dif = e.difference(td);
-    int dd = dif.inDays + 1;
+    Duration? dif = e?.difference(td);
+    int dd = dif!.inDays + 1;
     return (dd > 0) ? dd.toString() : "0";
   }
 
@@ -42,13 +42,13 @@ class DateUtils {
     }
   }
 
-  static String? convertToDateFull(String input) {
+  static String convertToDateFull(String input) {
     try {
       var d = DateFormat("yyyy-MM-dd").parseStrict(input);
       var formatter = DateFormat('dd MMM yyyy');
       return formatter.format(d);
     } catch (e) {
-      return null;
+      return null!;
     }
   }
 

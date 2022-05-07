@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './ui/docslist.dart';
 
-void main() => runApp(DocExpiryApp());
+void main() => runApp(const DocExpiryApp());
 
 class DocExpiryApp extends StatelessWidget {
   const DocExpiryApp({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class DocExpiryApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
-      home: DocList(),
+      home: const DocList(),
     );
   }
 }

@@ -1,14 +1,14 @@
 import '../utils/utils.dart';
 
 class Doc {
-  int id;
-  String title;
-  String expiration;
+  late int id;
+  late String title;
+  late String expiration;
 
-  int fqYear;
-  int fqHalfYear;
-  int fqQuarter;
-  int fqMonth;
+  late int fqYear;
+  late int fqHalfYear;
+  late int fqQuarter;
+  late int fqMonth;
 
   Doc(this.title, this.expiration, this.fqHalfYear, this.fqMonth,
       this.fqQuarter, this.fqYear);
