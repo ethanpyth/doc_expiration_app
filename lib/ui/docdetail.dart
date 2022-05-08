@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide DateUtils;
-import 'package:flutter/services.dart';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
