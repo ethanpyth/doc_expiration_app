@@ -78,14 +78,14 @@ class _DocDetailState extends State<DocDetail> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               children: <Widget>[
                 TextFormField(
-                  inputFormatters: [
+                  inputFormatters: const [
                     // WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]"))
                   ],
                   controller: titleCtrl,
                   style: tStyle,
                   validator: (val) => Val.validateTitle(val!),
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.title),
+                  decoration: const InputDecoration(
+                      icon: Icon(Icons.title),
                       hintText: 'Enter the document name',
                       labelText: 'Document Name'),
                 ),
