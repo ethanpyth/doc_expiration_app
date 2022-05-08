@@ -27,9 +27,7 @@ class Doc {
     map["fqMonth"] = fqMonth;
     map["fqQuarter"] = fqQuarter;
 
-    if (id != null) {
-      map["id"] = id;
-    }
+    map["id"] = id;
 
     return map;
   }
