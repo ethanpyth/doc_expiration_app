@@ -41,13 +41,13 @@ class DateUtils {
     }
   }
 
-  static String convertToDateFull(String input) {
+  static String? convertToDateFull(String input) {
     try {
       var d = DateFormat("yyyy-MM-dd").parseStrict(input);
       var formatter = DateFormat('dd MMM yyyy');
       return formatter.format(d);
     } catch (e) {
-      return null!;
+      return null;
     }
   }
 
