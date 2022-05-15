@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:async';
 
 import 'package:flutter/material.dart' hide DateUtils;
@@ -14,7 +16,7 @@ const menuDelete = "Delete";
 const List<String> menuOptions = <String>[menuDelete];
 
 class DocDetail extends StatefulWidget {
-  late Doc doc;
+  Doc? doc;
   final DbHelper dbh = DbHelper();
   DocDetail(Doc doc, {Key? key}) : super(key: key);
 
@@ -48,13 +50,13 @@ class _DocDetailState extends State<DocDetail> {
   Widget build(BuildContext context) {
     const String cStrDays = "Enter a number of days";
     TextStyle? tStyle = Theme.of(context).textTheme.titleMedium;
-    String ttl = widget.doc.title;
+    String ttl = widget.doc!.title;
 
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text(ttl != "" ? widget.doc.title : "New Document"),
+        title: Text(ttl != "" ? widget.doc!.title : "New Document"),
         actions: (ttl == "")
             ? <Widget>[]
             : <Widget>[
@@ -131,7 +133,7 @@ class _DocDetailState extends State<DocDetail> {
                 ),
                 Row(
                   children: <Widget>[
-                    Expanded(child: Text('b: Alert @ 6 months')),
+                    const Expanded(child: Text('b: Alert @ 6 months')),
                     Switch(
                         value: fqHalfYearCtrl,
                         onChanged: (bool value) {
@@ -200,53 +202,53 @@ class _DocDetailState extends State<DocDetail> {
   }
 
   void _initCtrls() {
-    titleCtrl.text = widget.doc.title;
-    expirationCtrl.text = widget.doc.expiration;
+    titleCtrl.text = widget.doc!.title;
+    expirationCtrl.text = widget.doc!.expiration;
     fqYearCtrl =
-        widget.doc.fqYear != null ? Val.intToBool(widget.doc.fqYear) : false;
-    fqHalfYearCtrl = widget.doc.fqHalfYear != null
-        ? Val.intToBool(widget.doc.fqHalfYear)
+        widget.doc!.fqYear != null ? Val.intToBool(widget.doc!.fqYear) : false;
+    fqHalfYearCtrl = widget.doc!.fqHalfYear != null
+        ? Val.intToBool(widget.doc!.fqHalfYear)
         : false;
     fqQuarterCtrl =
-        widget.doc.fqYear != null ? Val.intToBool(widget.doc.fqQuarter) : false;
+        widget.doc!.fqQuarter != null ? Val.intToBool(widget.doc!.fqQuarter) : false;
     fqMonthCtrl =
-        widget.doc.fqYear != null ? Val.intToBool(widget.doc.fqMonth) : false;
+        widget.doc!.fqMonth != null ? Val.intToBool(widget.doc!.fqMonth) : false;
   }
 
   void _selectMenu(String value) async {
     switch (value) {
       case menuDelete:
-        if (widget.doc.id == -1) {
+        if (widget.doc!.id == -1) {
           return;
         }
-        _deleteDoc(widget.doc.id);
+        _deleteDoc(widget.doc!.id);
     }
   }
 
   void _deleteDoc(int id) async {
-    int r = await widget.dbh.deleteDoc(widget.doc.id);
+    int r = await widget.dbh.deleteDoc(widget.doc!.id);
     Navigator.pop(context, true);
   }
 
   void _saveDoc() {
-    widget.doc.title = titleCtrl.text;
-    widget.doc.expiration = expirationCtrl.text;
+    widget.doc!.title = titleCtrl.text;
+    widget.doc!.expiration = expirationCtrl.text;
 
-    widget.doc.fqYear = Val.boolToInt(fqYearCtrl);
-    widget.doc.fqHalfYear = Val.boolToInt(fqHalfYearCtrl);
-    widget.doc.fqQuarter = Val.boolToInt(fqQuarterCtrl);
-    widget.doc.fqMonth = Val.boolToInt(fqMonthCtrl);
+    widget.doc!.fqYear = Val.boolToInt(fqYearCtrl);
+    widget.doc!.fqHalfYear = Val.boolToInt(fqHalfYearCtrl);
+    widget.doc!.fqQuarter = Val.boolToInt(fqQuarterCtrl);
+    widget.doc!.fqMonth = Val.boolToInt(fqMonthCtrl);
 
-    if (widget.doc.id > -1) {
-      debugPrint("_update->Doc Id: " + widget.doc.id.toString());
-      widget.dbh.updateDoc(widget.doc);
+    if (widget.doc!.id > -1) {
+      debugPrint("_update->Doc Id: " + widget.doc!.id.toString());
+      widget.dbh.updateDoc(widget.doc!);
       Navigator.pop(context, true);
     } else {
       Future<int?> idd = widget.dbh.getMaxId();
       idd.then((result) {
-        debugPrint("_insert->Doc Id: " + widget.doc.id.toString());
-        widget.doc.id = (result != null) ? result + 1 : 1;
-        widget.dbh.insertDoc(widget.doc);
+        debugPrint("_insert->Doc Id: " + widget.doc!.id.toString());
+        widget.doc!.id = (result != null) ? result + 1 : 1;
+        widget.dbh.insertDoc(widget.doc!);
         Navigator.pop(context, true);
       });
     }

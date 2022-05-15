@@ -19,9 +19,9 @@ class DocList extends StatefulWidget {
 
 class _DocListState extends State<DocList> {
   DbHelper dbh = DbHelper();
-  late List<Doc> docs;
+  List<Doc>? docs;
   int count = 0;
-  late DateTime cDate;
+  DateTime? cDate;
 
   @override
   void initState() {
@@ -85,8 +85,8 @@ class _DocListState extends State<DocList> {
             docList.add(Doc.fromObject(result[i]));
           }
           setState(() {
-            if (docs.isNotEmpty) {
-              docs.clear();
+            if (docs!.isNotEmpty) {
+              docs!.clear();
             }
             docs = docList;
             this.count = count;
@@ -102,9 +102,9 @@ class _DocListState extends State<DocList> {
     Timer.periodic(secs, (Timer t) {
       DateTime nw = DateTime.now();
 
-      if (cDate.day != nw.day ||
-          cDate.month != nw.month ||
-          cDate.year != nw.year) {
+      if (cDate!.day != nw.day ||
+          cDate!.month != nw.month ||
+          cDate!.year != nw.year) {
         getData();
         cDate = DateTime.now();
       }
@@ -150,7 +150,7 @@ class _DocListState extends State<DocList> {
     final dbFuture = dbh.initializeDb();
     dbFuture.then((result) {
       setState(() {
-        docs.clear();
+        docs!.clear();
         count = 0;
       });
     });
@@ -167,7 +167,7 @@ class _DocListState extends State<DocList> {
     return ListView.builder(
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
-        String dd = Val.getExpiryStr(docs[position].expiration);
+        String dd = Val.getExpiryStr(docs![position].expiration);
         String dl = (dd != "1") ? " days left" : " day left";
         return Card(
           color: Colors.white,
@@ -175,18 +175,18 @@ class _DocListState extends State<DocList> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor:
-                  (Val.getExpiryStr(docs[position].expiration) != "0")
+                  (Val.getExpiryStr(docs![position].expiration) != "0")
                       ? Colors.blue
                       : Colors.red,
-              child: Text(docs[position].id.toString()),
+              child: Text(docs![position].id.toString()),
             ),
-            title: Text(docs[position].title),
-            subtitle: Text(Val.getExpiryStr(docs[position].expiration) +
+            title: Text(docs![position].title),
+            subtitle: Text(Val.getExpiryStr(docs![position].expiration) +
                 dl +
                 "\nExp: " +
-                DateUtils.convertToDateFull(docs[position].expiration)!),
+                DateUtils.convertToDateFull(docs![position].expiration)!),
             onTap: () {
-              _navigateToDetail(docs[position]);
+              _navigateToDetail(docs![position]);
             },
           ),
         );
@@ -194,6 +194,4 @@ class _DocListState extends State<DocList> {
     );
   }
 }
-
 // TODO Implement this library.
-
