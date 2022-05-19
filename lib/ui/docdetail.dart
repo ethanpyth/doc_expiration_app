@@ -99,9 +99,9 @@ class _DocDetailState extends State<DocDetail> {
                       child: TextFormField(
                         controller: expirationCtrl,
                         maxLength: 10,
-                        decoration: const InputDecoration(
-                            icon: Icon(Icons.calendar_today),
-                            // hintText: 'Expiry date (i.e. ' + DateUtils.daysAheadAsStr(daysAhead) + ')',
+                        decoration: InputDecoration(
+                            icon: const Icon(Icons.calendar_today),
+                            hintText: 'Expiry date (i.e. ${DateUtils.daysAheadAsStr(daysAhead)})',
                             labelText: 'Expiry Date'),
                         keyboardType: TextInputType.number,
                         validator: (val) => DateUtils.isValidate(val!)

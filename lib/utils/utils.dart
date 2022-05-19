@@ -77,12 +77,14 @@ class DateUtils {
     return isDate(dt) && d.isAfter(DateTime.now());
   }
 
+  static String daysAheadAsStr(int daysAhead) {
+    var now = DateTime.now();
+    DateTime ft = now.add(Duration(days: daysAhead));
+    return ftDateAsStr(ft);
+  }
+
   static String ftDateAsStr(DateTime ft) {
-    return ft.year.toString() +
-        "-" +
-        ft.month.toString().padLeft(2, "0") +
-        "-" +
-        ft.day.toString().padLeft(2, "0");
+    return "${ft.year.toString()}-${ft.month.toString().padLeft(2, "0")}-${ft.day.toString().padLeft(2, "0")}";
   }
 
   static String trimDate(String dt) {
