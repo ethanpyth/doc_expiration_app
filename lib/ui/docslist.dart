@@ -78,7 +78,7 @@ class _DocListState extends State<DocList> {
     dbfuture.then((result) {
       final docsFuture = dbh.getDocs();
       docsFuture.then((result) {
-        if (result.length >= 0) {
+        if (result.isNotEmpty) {
           List<Doc> docList = <Doc>[];
           var count = result.length;
           for (int i = 0; i < count - 1; i++) {

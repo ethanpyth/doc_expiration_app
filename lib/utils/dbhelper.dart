@@ -47,7 +47,8 @@ class DbHelper {
         "CREATE TABLE $tblDocs($docId INTEGER PRIMARY KEY, $docTitle TEXT, " +
             "$docExpiration TEXT, " +
             "$fqYear INTEGER, $fqHalfYear INTEGER, $fqQuarter INTEGER, " +
-            "$fqMonth INTEGER");
+            "$fqMonth INTEGER"
+    );
   }
 
   Future<int> insertDoc(Doc doc) async {

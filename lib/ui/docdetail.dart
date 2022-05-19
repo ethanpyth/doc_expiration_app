@@ -16,9 +16,9 @@ const menuDelete = "Delete";
 const List<String> menuOptions = <String>[menuDelete];
 
 class DocDetail extends StatefulWidget {
-  Doc? doc;
+  final Doc? doc;
   final DbHelper dbh = DbHelper();
-  DocDetail(Doc doc, {Key? key}) : super(key: key);
+  DocDetail(Doc document, {Key? key, this.doc}) : super(key: key);
 
   @override
   State<DocDetail> createState() => _DocDetailState();
@@ -65,7 +65,9 @@ class _DocDetailState extends State<DocDetail> {
                     itemBuilder: (BuildContext context) {
                       return menuOptions.map((String choice) {
                         return PopupMenuItem(
-                            child: Text(choice), value: choice);
+                            value: choice,
+                            child: Text(choice)
+                        );
                       }).toList();
                     })
               ],
@@ -173,8 +175,8 @@ class _DocDetailState extends State<DocDetail> {
                     top: 20.0
                   ),
                   child: ElevatedButton(
-                    child: const Text("Save"),
                     onPressed: _submitForm,
+                    child: const Text("Save"),
                   ),
                 )
               ],
@@ -227,7 +229,8 @@ class _DocDetailState extends State<DocDetail> {
 
   void _deleteDoc(int id) async {
     int r = await widget.dbh.deleteDoc(widget.doc!.id);
-    Navigator.pop(context, true);
+    if(!mounted) return ;
+    Navigator.of(context).pop();
   }
 
   void _saveDoc() {
@@ -240,13 +243,13 @@ class _DocDetailState extends State<DocDetail> {
     widget.doc!.fqMonth = Val.boolToInt(fqMonthCtrl);
 
     if (widget.doc!.id > -1) {
-      debugPrint("_update->Doc Id: " + widget.doc!.id.toString());
+      debugPrint("_update->Doc Id: ${widget.doc!.id.toString()}");
       widget.dbh.updateDoc(widget.doc!);
       Navigator.pop(context, true);
     } else {
       Future<int?> idd = widget.dbh.getMaxId();
       idd.then((result) {
-        debugPrint("_insert->Doc Id: " + widget.doc!.id.toString());
+        debugPrint("_insert->Doc Id: ${widget.doc!.id.toString()}");
         widget.doc!.id = (result != null) ? result + 1 : 1;
         widget.dbh.insertDoc(widget.doc!);
         Navigator.pop(context, true);
@@ -265,7 +268,6 @@ class _DocDetailState extends State<DocDetail> {
   }
 
   void showMessage(String message, [MaterialColor color = Colors.red]) {
-    // _scaffoldKey.currentState.showSnackBar(snackbar)
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }

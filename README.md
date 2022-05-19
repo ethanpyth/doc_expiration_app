@@ -1,8 +1,8 @@
-# test_app
+# DOCEXPIRE
 
-A new Flutter project.
+A Flutter project that list all of your important document and his expiration date for a better managing of them.
 
-## Getting Started
+## INTRODUCTION
 
 This project is a starting point for a Flutter application.
 
