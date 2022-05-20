@@ -4,8 +4,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart' hide DateUtils;
 
-// ignore: import_of_legacy_library_into_null_safe
-//import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
@@ -30,14 +28,13 @@ class _DocDetailState extends State<DocDetail> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final int daysAhead = 5475;
-  
+
   final TextEditingController expirationCtrl = TextEditingController();
   final TextEditingController titleCtrl = TextEditingController();
   final maskFormatter = MaskTextInputFormatter(
       mask: '####-##-##',
       filter: {"#": RegExp(r'[0-9]')},
-    type: MaskAutoCompletionType.lazy
-  );
+      type: MaskAutoCompletionType.lazy);
 
   bool fqYearCtrl = true;
   bool fqHalfYearCtrl = true;
@@ -70,9 +67,7 @@ class _DocDetailState extends State<DocDetail> {
                     itemBuilder: (BuildContext context) {
                       return menuOptions.map((String choice) {
                         return PopupMenuItem(
-                            value: choice,
-                            child: Text(choice)
-                        );
+                            value: choice, child: Text(choice));
                       }).toList();
                     })
               ],
@@ -107,7 +102,8 @@ class _DocDetailState extends State<DocDetail> {
                         maxLength: 10,
                         decoration: InputDecoration(
                             icon: const Icon(Icons.calendar_today),
-                            hintText: 'Expiry date (i.e. ${DateUtils.daysAheadAsStr(daysAhead)})',
+                            hintText:
+                                'Expiry date (i.e. ${DateUtils.daysAheadAsStr(daysAhead)})',
                             labelText: 'Expiry Date'),
                         keyboardType: TextInputType.number,
                         validator: (val) => DateUtils.isValidate(val!)
@@ -176,10 +172,7 @@ class _DocDetailState extends State<DocDetail> {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.only(
-                    left: 40.0,
-                    top: 20.0
-                  ),
+                  padding: const EdgeInsets.only(left: 40.0, top: 20.0),
                   child: ElevatedButton(
                     onPressed: _submitForm,
                     child: const Text("Save"),
@@ -201,27 +194,34 @@ class _DocDetailState extends State<DocDetail> {
 
     DatePicker.showDatePicker(context, showTitleActions: true,
         onConfirm: (date) {
-          setState(() {
-            DateTime dt = date;
-            String r = DateUtils.ftDateAsStr(dt);
-            expirationCtrl.text = r;
-          });
-        }, 
-        currentTime: initialDate);
+      setState(() {
+        DateTime dt = date;
+        String r = DateUtils.ftDateAsStr(dt);
+        expirationCtrl.text = r;
+      });
+    }, currentTime: initialDate);
   }
 
   void _initCtrls() {
-    titleCtrl.text = widget.doc!.title;
-    expirationCtrl.text = widget.doc!.expiration;
-    fqYearCtrl =
-        widget.doc!.fqYear != null ? Val.intToBool(widget.doc!.fqYear) : false;
+    if (widget.doc != null) {
+      titleCtrl.text = widget.doc!.title;
+      expirationCtrl.text = widget.doc!.expiration;
+    } else {
+      titleCtrl.text = "";
+      expirationCtrl.text = "";
+    }
+    fqYearCtrl = widget.doc!.fqYear != null
+        ? Val.intToBool(widget.doc!.fqYear)
+        : false;
     fqHalfYearCtrl = widget.doc!.fqHalfYear != null
         ? Val.intToBool(widget.doc!.fqHalfYear)
         : false;
-    fqQuarterCtrl =
-        widget.doc!.fqQuarter != null ? Val.intToBool(widget.doc!.fqQuarter) : false;
-    fqMonthCtrl =
-        widget.doc!.fqMonth != null ? Val.intToBool(widget.doc!.fqMonth) : false;
+    fqQuarterCtrl = widget.doc!.fqQuarter != null
+        ? Val.intToBool(widget.doc!.fqQuarter)
+        : false;
+    fqMonthCtrl = widget.doc!.fqMonth != null
+        ? Val.intToBool(widget.doc!.fqMonth)
+        : false;
   }
 
   void _selectMenu(String value) async {
@@ -236,7 +236,7 @@ class _DocDetailState extends State<DocDetail> {
 
   void _deleteDoc(int id) async {
     int r = await widget.dbh.deleteDoc(widget.doc!.id);
-    if(!mounted) return ;
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 

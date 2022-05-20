@@ -37,7 +37,7 @@ class DbHelper {
 
   Future<Database> initializeDb() async {
     Directory d = await getApplicationDocumentsDirectory();
-    String p = "${d.path} /docexpire.db";
+    String p = "${d.path}/docexpire.db";
     var db = await openDatabase(p, version: 1, onCreate: _createDb);
     return db;
   }
