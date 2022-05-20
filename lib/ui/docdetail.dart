@@ -5,7 +5,8 @@ import 'dart:async';
 import 'package:flutter/material.dart' hide DateUtils;
 
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+//import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import '../model/model.dart';
@@ -29,10 +30,14 @@ class _DocDetailState extends State<DocDetail> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final int daysAhead = 5475;
-
+  
+  final TextEditingController expirationCtrl = TextEditingController();
   final TextEditingController titleCtrl = TextEditingController();
-  final TextEditingController expirationCtrl =
-      MaskedTextController(mask: '2000-00-00');
+  final maskFormatter = MaskTextInputFormatter(
+      mask: '####-##-##',
+      filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy
+  );
 
   bool fqYearCtrl = true;
   bool fqHalfYearCtrl = true;
@@ -82,8 +87,8 @@ class _DocDetailState extends State<DocDetail> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               children: <Widget>[
                 TextFormField(
-                  inputFormatters: const [
-                    // WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]"))
+                  inputFormatters: [
+                    //WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]"))
                   ],
                   controller: titleCtrl,
                   style: tStyle,
@@ -97,6 +102,7 @@ class _DocDetailState extends State<DocDetail> {
                   children: <Widget>[
                     Expanded(
                       child: TextFormField(
+                        inputFormatters: [maskFormatter],
                         controller: expirationCtrl,
                         maxLength: 10,
                         decoration: InputDecoration(
