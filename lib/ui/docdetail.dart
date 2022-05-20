@@ -87,7 +87,7 @@ class _DocDetailState extends State<DocDetail> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               children: <Widget>[
                 TextFormField(
-                  inputFormatters: [
+                  inputFormatters: const [
                     //WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]"))
                   ],
                   controller: titleCtrl,
@@ -201,12 +201,13 @@ class _DocDetailState extends State<DocDetail> {
 
     DatePicker.showDatePicker(context, showTitleActions: true,
         onConfirm: (date) {
-      setState(() {
-        DateTime dt = date;
-        String r = DateUtils.ftDateAsStr(dt);
-        expirationCtrl.text = r;
-      });
-    }, currentTime: initialDate);
+          setState(() {
+            DateTime dt = date;
+            String r = DateUtils.ftDateAsStr(dt);
+            expirationCtrl.text = r;
+          });
+        }, 
+        currentTime: initialDate);
   }
 
   void _initCtrls() {

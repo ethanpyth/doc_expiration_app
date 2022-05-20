@@ -19,7 +19,7 @@ class DbHelper {
   String fqQuarter = "fqQuarter";
   String fqMonth = "fqMonth";
 
-  static late final DbHelper _dbHelper = DbHelper._internal();
+  static final DbHelper _dbHelper = DbHelper._internal();
 
   DbHelper._internal();
 
@@ -37,17 +37,14 @@ class DbHelper {
 
   Future<Database> initializeDb() async {
     Directory d = await getApplicationDocumentsDirectory();
-    String p = d.path + "/docexpire.db";
+    String p = "${d.path} /docexpire.db";
     var db = await openDatabase(p, version: 1, onCreate: _createDb);
     return db;
   }
 
   void _createDb(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE $tblDocs($docId INTEGER PRIMARY KEY, $docTitle TEXT, " +
-            "$docExpiration TEXT, " +
-            "$fqYear INTEGER, $fqHalfYear INTEGER, $fqQuarter INTEGER, " +
-            "$fqMonth INTEGER"
+        "CREATE TABLE $tblDocs($docId INTEGER PRIMARY KEY, $docTitle TEXT, $docExpiration TEXT, $fqYear INTEGER, $fqHalfYear INTEGER, $fqQuarter INTEGER, $fqMonth INTEGER"
     );
   }
 
@@ -57,7 +54,7 @@ class DbHelper {
     try {
       r = await db.insert(tblDocs, doc.toMap());
     } catch (e) {
-      debugPrint("insertDoc: " + e.toString());
+      debugPrint("insertDoc: ${e.toString()}");
     }
     return r;
   }
@@ -72,7 +69,7 @@ class DbHelper {
   Future<List> getDoc(int id) async {
     Database db = await this.db;
     var r = await db.rawQuery(
-        "SELECT * FROM $tblDocs WHERE $docId = " + id.toString() + "");
+        "SELECT * FROM $tblDocs WHERE $docId = ${id.toString()}");
     return r;
   }
 
@@ -80,11 +77,7 @@ class DbHelper {
     List<String> p = payload.split("|");
     if (p.length == 2) {
       Database db = await this.db;
-      var r = await db.rawQuery("SELECT * FROM $tblDocs WHERE $docId = " +
-          p[0] +
-          " AND $docExpiration = '" +
-          p[1] +
-          "'");
+      var r = await db.rawQuery("SELECT * FROM $tblDocs WHERE $docId = ${p[0]} AND $docExpiration = '${p[1]}'");
       return r;
     } else {
       return null;

@@ -181,10 +181,7 @@ class _DocListState extends State<DocList> {
               child: Text(docs![position].id.toString()),
             ),
             title: Text(docs![position].title),
-            subtitle: Text(Val.getExpiryStr(docs![position].expiration) +
-                dl +
-                "\nExp: " +
-                DateUtils.convertToDateFull(docs![position].expiration)!),
+            subtitle: Text("${Val.getExpiryStr(docs![position].expiration)}$dl\nExp: ${DateUtils.convertToDateFull(docs![position].expiration)}"),
             onTap: () {
               _navigateToDetail(docs![position]);
             },
