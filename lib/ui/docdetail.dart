@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'dart:async';
 
 import 'package:flutter/material.dart' hide DateUtils;
@@ -15,37 +13,129 @@ const menuDelete = "Delete";
 const List<String> menuOptions = <String>[menuDelete];
 
 class DocDetail extends StatefulWidget {
-  final Doc? doc;
-  final DbHelper dbh = DbHelper();
   DocDetail(Doc document, {Key? key, this.doc}) : super(key: key);
+
+  final DbHelper dbh = DbHelper();
+  final Doc? doc;
 
   @override
   State<DocDetail> createState() => _DocDetailState();
 }
 
 class _DocDetailState extends State<DocDetail> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final int daysAhead = 5475;
-
   final TextEditingController expirationCtrl = TextEditingController();
-  final TextEditingController titleCtrl = TextEditingController();
+  bool fqHalfYearCtrl = true;
+  bool fqLessMonthCtrl = true;
+  bool fqMonthCtrl = true;
+  bool fqQuarterCtrl = true;
+  bool fqYearCtrl = true;
   final maskFormatter = MaskTextInputFormatter(
       mask: '####-##-##',
       filter: {"#": RegExp(r'[0-9]')},
-      type: MaskAutoCompletionType.lazy);
+      type: MaskAutoCompletionType.lazy
+  
+  );
 
-  bool fqYearCtrl = true;
-  bool fqHalfYearCtrl = true;
-  bool fqQuarterCtrl = true;
-  bool fqMonthCtrl = true;
-  bool fqLessMonthCtrl = true;
+  final TextEditingController titleCtrl = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _initCtrls();
+  }
+
+  void showMessage(String message, [MaterialColor color = Colors.red]) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future _chooseDate(BuildContext context, String initialDateString) async {
+    var now = DateTime.now();
+    DateTime initialDate;
+
+    if (DateUtils.convertToDate(initialDateString)!.year >= now.year 
+        && DateUtils.convertToDate(initialDateString)!.isAfter(now)) {
+      initialDate = DateUtils.convertToDate(initialDateString)!;
+    } else {
+      initialDate = now;
+    }
+
+    DatePicker.showDatePicker(context, showTitleActions: true,
+        onConfirm: (date) {
+      setState(() {
+        DateTime dt = date;
+        String r = DateUtils.ftDateAsStr(dt);
+        expirationCtrl.text = r;
+      });
+    }, currentTime: initialDate);
+  }
+
+  void _initCtrls() {
+    if (widget.doc != null) {
+      titleCtrl.text = widget.doc!.title;
+      expirationCtrl.text = widget.doc!.expiration;
+      fqYearCtrl = Val.intToBool(widget.doc!.fqYear);
+      fqHalfYearCtrl = Val.intToBool(widget.doc!.fqHalfYear);
+      fqQuarterCtrl = Val.intToBool(widget.doc!.fqQuarter);
+      fqMonthCtrl = Val.intToBool(widget.doc!.fqMonth);
+    } else {
+      titleCtrl.text = "";
+      expirationCtrl.text = "";
+    }
+  }
+
+  void _selectMenu(String value) async {
+    switch (value) {
+      case menuDelete:
+        if (widget.doc!.id == -1) {
+          return;
+        }
+        _deleteDoc(widget.doc!.id);
+    }
+  }
+
+  void _deleteDoc(int id) async {
+    int r = await widget.dbh.deleteDoc(widget.doc!.id);
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  void _saveDoc() {
+    widget.doc!.title = titleCtrl.text;
+    widget.doc!.expiration = expirationCtrl.text;
+
+    widget.doc!.fqYear = Val.boolToInt(fqYearCtrl);
+    widget.doc!.fqHalfYear = Val.boolToInt(fqHalfYearCtrl);
+    widget.doc!.fqQuarter = Val.boolToInt(fqQuarterCtrl);
+    widget.doc!.fqMonth = Val.boolToInt(fqMonthCtrl);
+
+    if (widget.doc!.id > -1) {
+      debugPrint("_update->Doc Id: ${widget.doc!.id.toString()}");
+      widget.dbh.updateDoc(widget.doc!);
+      Navigator.pop(context, true);
+    } else {
+      Future<int?> idd = widget.dbh.getMaxId();
+      idd.then((result) {
+        debugPrint("_insert->Doc Id: ${widget.doc!.id.toString()}");
+        widget.doc!.id = (result != null) ? result + 1 : 1;
+        widget.dbh.insertDoc(widget.doc!);
+        Navigator.pop(context, true);
+      });
+    }
+  }
+
+  void _submitForm() {
+    final FormState? form = _formKey.currentState;
+
+    if (!form!.validate()) {
+      showMessage('Some data is invalid. Please correct.');
+    } else {
+      _saveDoc();
+    }
   }
 
   @override
@@ -91,7 +181,8 @@ class _DocDetailState extends State<DocDetail> {
                   decoration: const InputDecoration(
                       icon: Icon(Icons.title),
                       hintText: 'Enter the document name',
-                      labelText: 'Document Name'),
+                      labelText: 'Document Name'
+                  ),
                 ),
                 Row(
                   children: <Widget>[
@@ -106,7 +197,7 @@ class _DocDetailState extends State<DocDetail> {
                                 'Expiry date (i.e. ${DateUtils.daysAheadAsStr(daysAhead)})',
                             labelText: 'Expiry Date'),
                         keyboardType: TextInputType.number,
-                        validator: (val) => DateUtils.isValidate(val!)
+                        validator: (val) => DateUtils.isValidate("2002-09-12")
                             ? null
                             : 'Not a valid future date',
                       ),
@@ -180,102 +271,8 @@ class _DocDetailState extends State<DocDetail> {
                 )
               ],
             ),
-          )),
+          )
+      ),
     );
-  }
-
-  Future _chooseDate(BuildContext context, String initialDateString) async {
-    var now = DateTime.now();
-    var initialDate = DateUtils.convertToDate(initialDateString) ?? now;
-
-    initialDate = (initialDate.year >= now.year && initialDate.isAfter(now)
-        ? initialDate
-        : now);
-
-    DatePicker.showDatePicker(context, showTitleActions: true,
-        onConfirm: (date) {
-      setState(() {
-        DateTime dt = date;
-        String r = DateUtils.ftDateAsStr(dt);
-        expirationCtrl.text = r;
-      });
-    }, currentTime: initialDate);
-  }
-
-  void _initCtrls() {
-    if (widget.doc != null) {
-      titleCtrl.text = widget.doc!.title;
-      expirationCtrl.text = widget.doc!.expiration;
-    } else {
-      titleCtrl.text = "";
-      expirationCtrl.text = "";
-    }
-    fqYearCtrl = widget.doc!.fqYear != null
-        ? Val.intToBool(widget.doc!.fqYear)
-        : false;
-    fqHalfYearCtrl = widget.doc!.fqHalfYear != null
-        ? Val.intToBool(widget.doc!.fqHalfYear)
-        : false;
-    fqQuarterCtrl = widget.doc!.fqQuarter != null
-        ? Val.intToBool(widget.doc!.fqQuarter)
-        : false;
-    fqMonthCtrl = widget.doc!.fqMonth != null
-        ? Val.intToBool(widget.doc!.fqMonth)
-        : false;
-  }
-
-  void _selectMenu(String value) async {
-    switch (value) {
-      case menuDelete:
-        if (widget.doc!.id == -1) {
-          return;
-        }
-        _deleteDoc(widget.doc!.id);
-    }
-  }
-
-  void _deleteDoc(int id) async {
-    int r = await widget.dbh.deleteDoc(widget.doc!.id);
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
-  void _saveDoc() {
-    widget.doc!.title = titleCtrl.text;
-    widget.doc!.expiration = expirationCtrl.text;
-
-    widget.doc!.fqYear = Val.boolToInt(fqYearCtrl);
-    widget.doc!.fqHalfYear = Val.boolToInt(fqHalfYearCtrl);
-    widget.doc!.fqQuarter = Val.boolToInt(fqQuarterCtrl);
-    widget.doc!.fqMonth = Val.boolToInt(fqMonthCtrl);
-
-    if (widget.doc!.id > -1) {
-      debugPrint("_update->Doc Id: ${widget.doc!.id.toString()}");
-      widget.dbh.updateDoc(widget.doc!);
-      Navigator.pop(context, true);
-    } else {
-      Future<int?> idd = widget.dbh.getMaxId();
-      idd.then((result) {
-        debugPrint("_insert->Doc Id: ${widget.doc!.id.toString()}");
-        widget.doc!.id = (result != null) ? result + 1 : 1;
-        widget.dbh.insertDoc(widget.doc!);
-        Navigator.pop(context, true);
-      });
-    }
-  }
-
-  void _submitForm() {
-    final FormState? form = _formKey.currentState;
-
-    if (!form!.validate()) {
-      showMessage('Some data is invalid. Please correct.');
-    } else {
-      _saveDoc();
-    }
-  }
-
-  void showMessage(String message, [MaterialColor color = Colors.red]) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
   }
 }
